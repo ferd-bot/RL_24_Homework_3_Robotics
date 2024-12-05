@@ -108,6 +108,8 @@ rqt_image_view
 
 1. **Multiple Terminals**: Ensure you run each node or command in a separate terminal after sourcing the workspace (`source install/setup.bash`).
 2. **Video Demonstrations**: In the repository there are videos of the "positioning" and "look at point" tasks.
+  - "https://www.youtube.com/watch?v=mJy-RStUUkE" - Positioning
+  - "https://www.youtube.com/watch?v=UNbixnNQXAw" - Look_at_Point
 3. **Troubleshooting**: If the simulation or tracking does not work as expected:
    - Verify that all required nodes are running.
    - Check for error messages in each terminal.
