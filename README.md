@@ -107,7 +107,7 @@ rqt_image_view
 ## Notes and Tips
 
 1. **Multiple Terminals**: Ensure you run each node or command in a separate terminal after sourcing the workspace (`source install/setup.bash`).
-2. **Marker ID and Size**: The `marker_id` and `marker_size` parameters must match your ArUco marker configuration.
+2. **Video Demonstrations**: In the repository there are videos of the "positioning" and "look at point" tasks.
 3. **Troubleshooting**: If the simulation or tracking does not work as expected:
    - Verify that all required nodes are running.
    - Check for error messages in each terminal.
