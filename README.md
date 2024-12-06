@@ -1,5 +1,6 @@
 # RL24_HW_3 Updated Instructions
 Ferdinando Dionisio, Vittorio Lisi, Giovanni Gabriele Imbimbo, Emanuele Cifelli
+
 ## Overview
 
 This guide provides updated instructions for working with the robotics package, focusing on Gazebo simulation with velocity controllers, positioning tasks, OpenCV integration, and ArUco marker tracking.
@@ -13,6 +14,15 @@ Ensure that the repository has been cloned and the workspace is built:
 git clone https://github.com/ferd-bot/RL_24_Homewrok_3_Robotics.git
 colcon build
 source install/setup.bash
+```
+
+## Remember
+When cloning the repository with `git clone`, the command downloads a single directory containing all files. This may create directory structure issues. It is recommended to manually move all the folders to the `src` directory or use the following commands:
+
+### Move all folders and files to `src` and delete the parent directory:
+```bash
+mv ~/ros2_ws/src/RL_24_Homewrok_3_Robotics/* ~/ros2_ws/src/
+rm -rf ~/ros2_ws/src/RL_24_Homewrok_3_Robotics
 ```
 
 ---
@@ -57,14 +67,7 @@ ros2 run ros2_opencv ros2_opencv_node
 ### Establish Marker Tracking
 To integrate with ArUco markers, run the following command:
 ```bash
-ros2 run aruco_ros single --ros-args \
-  -r /image:=/videocamera \
-  -r /camera_info:=/videocamera_info \
-  -p marker_id:=201 \
-  -p marker_size:=0.1 \
-  -p reference_frame:=camera_link \
-  -p marker_frame:=aruco_marker_frame \
-  -p camera_frame:=camera_link
+ros2 run aruco_ros single --ros-args   -r /image:=/videocamera   -r /camera_info:=/videocamera_info   -p marker_id:=201   -p marker_size:=0.1   -p reference_frame:=camera_link   -p marker_frame:=aruco_marker_frame   -p camera_frame:=camera_link
 ```
 
 ---
