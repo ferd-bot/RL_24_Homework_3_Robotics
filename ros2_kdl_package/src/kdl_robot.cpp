@@ -216,7 +216,12 @@ KDL::Jacobian KDLRobot::getEEBodyJacobian()
 
 Eigen::VectorXd KDLRobot::getEEJacDotqDot()
 {
-    return s_J_dot_ee_.data;
+    Eigen::VectorXd q_dot = this->getJntVelocities();
+
+    //J_dot * q_dot
+    Eigen::VectorXd jacobian_dot_q_dot = s_J_dot_ee_.data * q_dot;
+
+    return jacobian_dot_q_dot;
 }
 
 void KDLRobot::addEE(const KDL::Frame &_f_F_ee)

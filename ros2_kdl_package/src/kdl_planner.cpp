@@ -64,45 +64,103 @@ KDL::Trajectory* KDLPlanner::getTrajectory()
 	return traject_;
 }
 
+// Nuovo costruttore per traiettoria circolare
+KDLPlanner::KDLPlanner(double _trajDuration, double _accDuration, 
+                       Eigen::Vector3d _trajInit, double _trajRadius)
+{
+    trajDuration_ = _trajDuration;
+    accDuration_ = _accDuration;
+    trajInit_ = _trajInit;
+    trajRadius_ = _trajRadius;
+    circular_trajectory_ = true;
+}
+
 trajectory_point KDLPlanner::compute_trajectory(double time)
 {
-  /* trapezoidal velocity profile with accDuration_ acceleration time period and trajDuration_ total duration.
-     time = current time
-     trajDuration_  = final time
-     accDuration_   = acceleration time
-     trajInit_ = trajectory initial point
-     trajEnd_  = trajectory final point */
+    trajectory_point traj;
 
-  trajectory_point traj;
+    // Profilo trapezoidale per s, s_dot, s_ddot
+    double s, s_dot, s_ddot;
 
-  Eigen::Vector3d ddot_traj_c = -1.0/(std::pow(accDuration_,2)-trajDuration_*accDuration_)*(trajEnd_-trajInit_);
+    if (time <= accDuration_)
+    {
+        // Fase di accelerazione
+        s = 0.5 * std::pow(time / accDuration_, 2);
+        s_dot = time / std::pow(accDuration_, 2);
+        s_ddot = 1.0 / std::pow(accDuration_, 2);
+    }
+    else if (time <= trajDuration_ - accDuration_)
+    {
+        // Fase di velocità costante
+        s = (time - accDuration_ / 2.0) / trajDuration_;
+        s_dot = 1.0 / trajDuration_;
+        s_ddot = 0.0;
+    }
+    else if (time <= trajDuration_)
+    {
+        // Fase di decelerazione
+        double t_rem = trajDuration_ - time;
+        s = 1.0 - 0.5 * std::pow(t_rem / accDuration_, 2);
+        s_dot = t_rem / std::pow(accDuration_, 2);
+        s_ddot = -1.0 / std::pow(accDuration_, 2);
+    }
+    else
+    {
+        // Traiettoria completata
+        s = 1.0;
+        s_dot = 0.0;
+        s_ddot = 0.0;
+    }
 
-  if(time <= accDuration_)
-  {
-    traj.pos = trajInit_ + 0.5*ddot_traj_c*std::pow(time,2);
-    traj.vel = ddot_traj_c*time;
-    traj.acc = ddot_traj_c;
-  }
-  else if(time <= trajDuration_-accDuration_)
-  {
-    traj.pos = trajInit_ + ddot_traj_c*accDuration_*(time-accDuration_/2);
-    traj.vel = ddot_traj_c*accDuration_;
-    traj.acc = Eigen::Vector3d::Zero();
-  }
-  else
-  {
-    traj.pos = trajEnd_ - 0.5*ddot_traj_c*std::pow(trajDuration_-time,2);
-    traj.vel = ddot_traj_c*(trajDuration_-time);
-    traj.acc = -ddot_traj_c;
-  }
-  
-    // Calculate the interpolation factor s (between 0 and 1)
-    double s = time / trajDuration_;
-    if (s > 1.0) s = 1.0;
+    if (!circular_trajectory_)
+    {
+        // --- TRAIETTORIA LINEARE (CODICE ESISTENTE) ---
+        Eigen::Vector3d ddot_traj_c = -1.0 / (std::pow(accDuration_, 2) - trajDuration_ * accDuration_) * (trajEnd_ - trajInit_);
 
-    // Interpolate orientation
-    traj.orientation = orientationInit_.slerp(s, orientationEnd_);
+        if (time <= accDuration_)
+        {
+            traj.pos = trajInit_ + 0.5 * ddot_traj_c * std::pow(time, 2);
+            traj.vel = ddot_traj_c * time;
+            traj.acc = ddot_traj_c;
+        }
+        else if (time <= trajDuration_ - accDuration_)
+        {
+            traj.pos = trajInit_ + ddot_traj_c * accDuration_ * (time - accDuration_ / 2);
+            traj.vel = ddot_traj_c * accDuration_;
+            traj.acc = Eigen::Vector3d::Zero();
+        }
+        else
+        {
+            traj.pos = trajEnd_ - 0.5 * ddot_traj_c * std::pow(trajDuration_ - time, 2);
+            traj.vel = ddot_traj_c * (trajDuration_ - time);
+            traj.acc = -ddot_traj_c;
+        }
 
-  return traj;
+        // Interpolazione quaternioni
+        traj.orientation = orientationInit_.slerp(s, orientationEnd_);
+    }
+    else
+    {
+        // --- TRAIETTORIA CIRCOLARE ---
+        const double two_pi = 2 * M_PI;
 
+        // Calcola posizione
+        traj.pos << trajInit_.x(),
+                    trajInit_.y() - trajRadius_ * cos(two_pi * s),
+                    trajInit_.z() - trajRadius_ * sin(two_pi * s);
+
+        // Calcola velocità
+        traj.vel << 0,
+                    trajRadius_ * two_pi * s_dot * sin(two_pi * s),
+                    -trajRadius_ * two_pi * s_dot * cos(two_pi * s);
+
+        // Calcola accelerazione
+        traj.acc << 0,
+                    trajRadius_ * two_pi * (s_ddot * sin(two_pi * s) + s_dot * s_dot * cos(two_pi * s)),
+                    -trajRadius_ * two_pi * (s_ddot * cos(two_pi * s) - s_dot * s_dot * sin(two_pi * s));
+
+    }
+
+    return traj;
 }
+

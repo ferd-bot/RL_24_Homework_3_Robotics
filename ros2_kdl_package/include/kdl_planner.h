@@ -42,6 +42,7 @@ public:
 
     //////////////////////////////////
     KDLPlanner(double _trajDuration, double _accDuration, Eigen::Vector3d _trajInit, Eigen::Vector3d _trajEnd, Eigen::Quaterniond& orientationInit, Eigen::Quaterniond& orientationEnd);
+    KDLPlanner(double _trajDuration, double _accDuration, Eigen::Vector3d _trajInit, double _trajRadius);
     trajectory_point compute_trajectory(double time);
 
 private:
@@ -57,6 +58,8 @@ private:
     Eigen::Quaterniond orientationInit_;
     Eigen::Quaterniond orientationEnd_;
     trajectory_point p;
+    double trajRadius_;
+    bool circular_trajectory_ = false;
 
 };
 
