@@ -175,8 +175,8 @@ public:
         // Set end_position based on the task
         if (task_ == "positioning")
         {
-            end_position << 0.2, -0.5, 0.5;
-            end_position[0] += 0.5; // Add an offset of +0.5 in x
+            end_position << 0.1, -0.5, 0.5;
+            end_position[0] += 0.6; // Add an offset of +0.6 in x
         }
         else
         {
@@ -574,7 +574,7 @@ private:
    	// Update the KDLRobot structure with current states
   	robot_->update(toStdVector(joint_positions_.data), toStdVector(joint_velocities_.data));
 
-  	double Kpp = 550;  // Proportional position gain
+  	double Kpp = 500;  // Proportional position gain
   	double Kpo = 750;  // Proportional orientation gain
   	double Kdp = 200;  // Derivative position gain
   	double Kdo = 200;  // Derivative orientation gain
