@@ -86,5 +86,5 @@ ros2 run aruco_ros single --ros-args   -r /image:=/videocamera   -r /camera_info
 ## Notes
 
 - Videos demonstrating the manipulator's functionality will be attached for reference.
-- url - Trajectory Linear Trapezoidal
-- url - Trajectory Circular Trapezoidal
+- https://youtu.be/JdOeHxABXvs - Trajectory Linear Trapezoidal
+- https://youtu.be/ppoZ1WKf1oo - Trajectory Circular Trapezoidal
