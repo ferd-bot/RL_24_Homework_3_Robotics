@@ -11,7 +11,7 @@ This guide provides updated instructions for working with the robotics package, 
 
 Ensure that the repository has been cloned and the workspace is built:
 ```bash
-git clone https://github.com/ferd-bot/RL_24_Homewrok_3_Robotics.git
+git clone https://github.com/ferd-bot/RL_24_Homework_3_Robotics.git
 colcon build
 source install/setup.bash
 ```
