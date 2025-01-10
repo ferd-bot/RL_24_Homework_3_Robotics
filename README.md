@@ -14,7 +14,7 @@ The **NewRelease_Homework_3** branch introduces an improved version of the code,
 ### 1. Clone the Repository
 Download the repository from GitHub:
 ```bash
-git clone -b REV_2 https://github.com/ferd-bot/RL_24_Homewrok_3_Robotics.git
+git clone -b REV_2 https://github.com/ferd-bot/RL_24_Homework_3_Robotics.git
 ```
 
 ### 2. Configure and Build the Workspace
