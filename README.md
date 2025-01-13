@@ -47,8 +47,8 @@ ros2 launch iiwa_bringup iiwa.launch.py use_sim:="true" use_vision:="true"
 
 ---
 
-### Start the IIWA Robot with Velocity Controller, Camera, and Spherical Object Enabled
-To launch the Gazebo simulation with the effort controller, camera, and spherical object:
+### Start the IIWA Robot with Position Controller, Camera, and Spherical Object Enabled
+To launch the Gazebo simulation with the Position controller, camera, and spherical object:
 ```bash
 ros2 launch iiwa_bringup iiwa.launch.py use_sim:="true" use_vision:="true" spherical_object:="true"
 ```
