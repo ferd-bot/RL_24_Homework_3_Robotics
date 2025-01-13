@@ -95,7 +95,10 @@ This command also opens RViz with a pre-configured setup for the `aruco_single` 
   ```bash
   ros2 run ros2_kdl_package ros2_kdl_node --ros-args -p cmd_interface:=velocity -p task:=look-at-point
   ```
-
+To visualize the image of Aruco, open `rqt` in another terminal and subscribe to the topic `/aruco_detect/result`:
+```bash
+rqt
+```
 ---
 
 ## Executing Trajectories in Effort Mode
@@ -117,7 +120,10 @@ To execute the trajectories, open a new terminal and run one of the following co
   ```bash
   ros2 run ros2_kdl_package ros2_kdl_node 0 --ros-args -p cmd_interface:=effort -p control_space:=operational_space
   ```
-
+To visualize the image of Aruco, open `rqt` in another terminal and subscribe to the topic `/aruco_detect/result`:
+```bash
+rqt
+```
 ---
 
 ## **Available Trajectories**
