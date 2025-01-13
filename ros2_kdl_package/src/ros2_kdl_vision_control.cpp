@@ -289,7 +289,6 @@ private:
         );
 
         // Create the Cartesian velocity vector for position and orientation
-        // forse meglio abbassarli, po mi dite voi  -.-.-.-.-.-.-.-.-.-.-.-.-.-
         double Kp_pos = 10;
         double Kp_ori = 3;
         Vector6d cartvel;
@@ -615,7 +614,7 @@ void desired_frame_operations()
                 for (int i = 0; i < torques.size(); ++i)
                 {
                     joint_efforts_cmd_(i) = torques(i);
-                    //RCLCPP_INFO(this->get_logger(), "torques[%u]: %.6f", i, torques(i));
+                    RCLCPP_INFO(this->get_logger(), "torques[%u]: %.6f", i, torques(i));
                 }
 
 	    	// === Pubblicazione per rqt_plot ===
