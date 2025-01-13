@@ -20,9 +20,18 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution, OrSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.actions import SetEnvironmentVariable
+import os
 
 
 def generate_launch_description():
+    # Imposta la variabile d'ambiente per GZ_SIM_RESOURCE_PATH
+    gz_sim_resource_path = '/home/user/ros2_ws/install/iiwa_description/share/iiwa_description/gazebo/models'
+    set_gz_sim_path = SetEnvironmentVariable(
+        name='GZ_SIM_RESOURCE_PATH',
+        value=gz_sim_resource_path
+    )
+    
     # Declare arguments
     declared_arguments = []
     declared_arguments.append(
@@ -160,6 +169,20 @@ def generate_launch_description():
         )
     )
 
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'spherical_object',
+            default_value='false',  
+            description='Enable or disable the spherical_object'
+    	)
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            'aruco_tag',
+            default_value='false',  
+            description='Enable or disable the aruco_tag'
+    	)
+    )    
     # Initialize Arguments
     runtime_config_package = LaunchConfiguration('runtime_config_package')
     controllers_file = LaunchConfiguration('controllers_file')
@@ -179,6 +202,8 @@ def generate_launch_description():
     base_frame_file = LaunchConfiguration('base_frame_file')
     namespace = LaunchConfiguration('namespace')
     use_vision = LaunchConfiguration('use_vision')
+    spherical_object = LaunchConfiguration('spherical_object')
+    aruco_tag = LaunchConfiguration('aruco_tag')    
 
     # Get URDF via xacro
     robot_description_content = Command(
@@ -275,10 +300,8 @@ def generate_launch_description():
             controllers_file,
         ]
     )
-    rviz_config_file = PathJoinSubstitution(
-        [FindPackageShare(description_package), 'rviz', 'iiwa.rviz']
-    )
-
+    rviz_config_file = os.path.expanduser('~/ros2_ws/src/ros2_iiwa/iiwa_description/Rviz_conf/iiwa_conf.rviz')
+    
     control_node = Node(
         package='controller_manager',
         executable='ros2_control_node',
@@ -303,7 +326,6 @@ def generate_launch_description():
         parameters=[
             robot_description,
         ],
-        condition=UnlessCondition(OrSubstitution(use_planning, use_sim)),
     )
     iiwa_simulation_world = PathJoinSubstitution(
         [FindPackageShare(description_package),
@@ -360,22 +382,91 @@ def generate_launch_description():
         executable='spawner',
         arguments=[robot_controller, '--controller-manager', [namespace, 'controller_manager']],
     )
-    
+
+    # Nodo per aggiungere spherical_object
+    spawn_spherical_object = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        arguments=[
+            '-file',
+            PathJoinSubstitution([
+                FindPackageShare('iiwa_description'),
+                'gazebo',
+                'models',
+                'spherical_object',                
+                'spherical_object.sdf'
+            ]),
+            '-name', 'spherical_object',
+            '-allow_renaming', 'true',
+            '-x', '1.0',
+            '-y', '-0.5',
+            '-z', '0.6'
+        ],
+        condition=IfCondition(spherical_object) 
+    )
+    # Nodo per aggiungere aruco_tag
+    spawn_aruco_tag = Node(
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        arguments=[
+            '-file',
+            PathJoinSubstitution([
+                FindPackageShare('iiwa_description'),
+                'gazebo',
+                'models',
+                'aruco_tag',                
+                'aruco_tag.sdf'
+            ]),
+            '-name', 'aruco_tag',
+            '-allow_renaming', 'true',
+            '-x', '-0.48',
+            '-y', '-0.48',
+            '-z', '0.5',
+            '-R', '1.57',
+            '-P', '0.0',
+            '-Y', '1.57'
+        ],
+        condition=IfCondition(aruco_tag) 
+    )
+
     # Node to bridge camera data
     bridge_camera = Node(
-    package='ros_gz_bridge',
-    executable='parameter_bridge',
-    arguments=[
-        '/camera@sensor_msgs/msg/Image@gz.msgs.Image',
-        '/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo',
-        '--ros-args',
-        '-r', '/camera:=/videocamera',
-        '-r', '/camera_info:=/videocamera_info',
-    ],
-    output='screen',
-    condition=IfCondition(use_vision)  # Nodo attivato solo se 'use_vision' è true
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '/camera@sensor_msgs/msg/Image@gz.msgs.Image',
+            '/camera_info@sensor_msgs/msg/CameraInfo@gz.msgs.CameraInfo',
+            '--ros-args',
+            '-r', '/camera:=/videocamera',
+            '-r', '/camera_info:=/videocamera_info',
+        ],
+        output='screen',
+        condition=IfCondition(use_vision)  # Nodo attivato solo se 'use_vision' è true
     )
-    
+
+    # Nodo ArUco
+    aruco_single = Node(
+        package='aruco_ros',
+        executable='single',
+        name='aruco_detect',
+        parameters=[
+            {
+                'image_is_rectified': True,
+                'marker_id': 201,
+                'marker_size': 0.2,
+                'reference_frame': 'camera_link',
+                'camera_frame': 'camera_link',
+                'marker_frame': 'aruco_marker_frame',
+            }
+        ],
+        remappings=[
+            ('/image', '/videocamera'),
+            ('/camera_info', '/videocamera_info'),
+        ],
+        output='screen',
+    )    
     # Delay `joint_state_broadcaster` after spawn_entity
     delay_joint_state_broadcaster_spawner_after_spawn_entity = RegisterEventHandler(
         event_handler=OnProcessExit(
@@ -412,11 +503,15 @@ def generate_launch_description():
     )
 
     nodes = [
+        set_gz_sim_path,
         gazebo,
         control_node,
         iiwa_planning_launch,
         iiwa_servoing_launch,
         spawn_entity,
+        spawn_spherical_object,
+        spawn_aruco_tag,
+        aruco_single,
         robot_state_pub_node,
         delay_joint_state_broadcaster_spawner_after_control_node,
         delay_joint_state_broadcaster_spawner_after_spawn_entity,
@@ -428,3 +523,4 @@ def generate_launch_description():
     ]
 
     return LaunchDescription(declared_arguments + nodes)
+
