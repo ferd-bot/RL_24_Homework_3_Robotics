@@ -10,7 +10,7 @@
       <visual>
         <origin xyz="${xyz}" rpy="0 0 0"/>
         <geometry>
-          <box size="0.05 0.05 0.05"/> <!-- Dimensioni della telecamera -->
+          <box size="0.03 0.03 0.03"/> <!-- Dimensioni della telecamera -->
         </geometry>
         <material name="green"/> <!-- Colore della telecamera -->
       </visual>
@@ -20,34 +20,33 @@
     <joint name="camera_joint" type="fixed">
       <parent link="${link}"/>
       <child link="camera_link"/>
-      <origin xyz="${xyz}" rpy="0 0 0"/>
+      <origin xyz="${xyz}" rpy="3.14 -3.14 -1.57"/>
     </joint>
 
     <!-- Proprietà del sensore per Gazebo -->
-    <gazebo reference="camera_link">
-      <sensor name="camera" type="camera">
-        <pose>${xyz} ${rpy}</pose>
-        <camera>
-          <horizontal_fov>1.047</horizontal_fov> <!-- Campo visivo -->
-          <image>
-            <width>320</width>
-            <height>240</height>
-            <format>R8G8B8</format>
-          </image>
-          <clip>
-            <near>0.1</near>
-            <far>100</far>
-          </clip>
-        </camera>
-        <always_on>true</always_on>
-        <update_rate>30</update_rate>
-        <visualize>true</visualize>
-        <topic>camera</topic>
-        <camera_name>arm_camera</camera_name>
-        <image_topic_name>/arm/camera/image_raw</image_topic_name>
-        <camera_info_topic_name>/arm/camera/camera_info</camera_info_topic_name>
-      </sensor>
-    </gazebo>
+<gazebo reference="camera_link">
+  <sensor name="camera" type="camera">
+    <pose>0 0 0 0 -1.57 1.57</pose>
+    <camera>
+      <horizontal_fov>1.547</horizontal_fov>
+      <image>
+        <width>640</width>
+        <height>480</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.1</near>
+        <far>100</far>
+      </clip>
+    </camera>
+    <always_on>true</always_on>
+    <update_rate>30</update_rate>
+    <visualize>true</visualize>
+    <topic>camera</topic>
+    <camera_name>arm_camera</camera_name>
+  </sensor>
+</gazebo>
+
 
   </xacro:macro>
 

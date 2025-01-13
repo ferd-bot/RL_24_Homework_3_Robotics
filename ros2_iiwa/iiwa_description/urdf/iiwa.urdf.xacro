@@ -248,7 +248,7 @@
   
   <!-- Aggiunta della Camera tramite xacro, e condizionale -->
     <xacro:if value="${use_vision}">
-      <xacro:add_camera link="${prefix}tool0" xyz="0.0 0.0 0.02" rpy="3.14 -1.57 0.0"/>
+      <xacro:add_camera link="${prefix}tool0" xyz="0.0 0.0 0.01" rpy="0.0 0.0 0.0"/>
     </xacro:if>
  
   </xacro:macro>
