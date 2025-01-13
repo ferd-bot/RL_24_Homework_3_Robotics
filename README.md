@@ -191,5 +191,7 @@ In `rqt`, set up the plotting plugin and add the following data points for each 
 
 ## **Videos**
 For simplicity, only videos demonstrating **Effort-Based Control in Operational Space with Gazebo** are included:
-- [Video URL Placeholder]
-
+- [Effort mode - Joint Space](https://www.youtube.com/watch?v=KF5lFydBR9M)
+- [Effort mode - Operational Space](https://www.youtube.com/watch?v=COIraJvqMWE)
+- [Velocity mode - Positioning](https://www.youtube.com/watch?v=PeUGFWGGt5Q)
+- [Velocity mode - Look at Point](https://www.youtube.com/watch?v=3tN8qj1Sb4s)
