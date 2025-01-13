@@ -34,15 +34,15 @@ This is **Homework 3**, where the objective is to implement a vision-based contr
 
 ## Launching the Simulation in Gazebo
 
-### Start the IIWA Robot with Velocity Controller and Camera Enabled
-To launch the Gazebo simulation with the effort controller and enable the camera:
+### Start the IIWA Robot with Position Controller and Camera Enabled
+To launch the Gazebo simulation with the Position controller and enable the camera:
 ```bash
-ros2 launch iiwa_bringup iiwa.launch.py command_interface:="effort" robot_controller:="effort_controller" use_sim:="true" use_vision:="true"
+ros2 launch iiwa_bringup iiwa.launch.py use_sim:="true" use_vision:="true"
 ```
 
 - **Note**: If the camera is not required, set `use_vision:=false`:
   ```bash
-  ros2 launch iiwa_bringup iiwa.launch.py command_interface:="effort" robot_controller:="effort_controller" use_sim:="true" use_vision:="false"
+  ros2 launch iiwa_bringup iiwa.launch.py use_sim:="true" use_vision:="false"
   ```
 
 ---
