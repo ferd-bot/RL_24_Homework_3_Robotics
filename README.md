@@ -12,7 +12,7 @@ This is **Homework 3**, where the objective is to implement a vision-based contr
 1. Clone the repository from GitHub:  
    ```bash
    cd src
-   git clone -b REV_3 https://github.com/ferd-bot/RL_24_Homework_2_Robotics.git .
+   git clone -b REV_3 https://github.com/ferd-bot/RL_24_Homework_3_Robotics.git .
    ```
    **Important**:  
    The `git clone` command with the dot (`.`) works only if the target directory is empty.  
