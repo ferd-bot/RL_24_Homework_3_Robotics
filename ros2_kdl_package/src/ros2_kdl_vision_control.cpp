@@ -122,7 +122,7 @@ public:
         // Subscribe to the ArUco marker pose
         aruco_pose_subscriber_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
             "/aruco_detect/pose",
-            10,
+            1000,
             std::bind(&Iiwa_pub_sub::aruco_pose_subscriber, this, std::placeholders::_1)
         );
 
