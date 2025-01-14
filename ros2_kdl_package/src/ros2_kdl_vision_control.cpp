@@ -648,7 +648,7 @@ void desired_frame_operations()
 
 			// Velocità desiderata tramite Jacobiano inverso
 			Vector6d cartvel;
-			cartvel << p.vel + 5 * error, 12 * o_error;
+			cartvel << p.vel + 5 * error, 15 * o_error;
 			dqd.data = pseudoinverse(robot_->getEEJacobian().data) * cartvel;
 
 			// Accelerazione desiderata come derivata della velocità
